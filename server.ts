@@ -7,7 +7,14 @@ const UserData = [
     },
 ];
 
-const CalendarEvent: { id: string, title: string; date: string }[] = []; // Event 배열 초기화
+// const CalendarEvent: { id: string, title: string; date: string }[] = []; // Event 배열 초기화
+
+const CalendarEvent = [{
+    user: "test",
+    id: "1",
+    title: "회의",
+    date: "2024-12-12",
+},];
 
 import express from "express";
 import cors from "cors";
@@ -73,12 +80,13 @@ app.get("/users", (req, res) => {
 
 
 app.post("/registerDate", (req, res) => {
-    const id: string = req.body.id
+    const user: string = req.body.user
+    const id: string = req.body.id;
     const title: string = req.body.title;
     const date: string = req.body.date;
     if (CalendarEvent) {
         CalendarEvent.push({
-            id, title, date
+            user, id, title, date
         });
         console.log("일정 등록 완료 : ", CalendarEvent);
         res.send({ ok: true });
@@ -120,6 +128,8 @@ app.delete("/deleteDate/:id", (req, res) => {
 
 
 // 현재 존재하는 일정 확인
-app.get("/events", (req, res) => {
-    res.send(CalendarEvent); // CalendarEvent 배열 반환
+app.get("/events/:id", (req, res) => {
+    const userId = req.params.id; // URL 파라미터에서 아이디 가져오기
+    const userEvents = CalendarEvent.filter(event => event.user === userId); // 해당 유저의 일정만 필터링
+    res.send(userEvents); // 필터링된 일정 반환
 });
